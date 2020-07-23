@@ -1,5 +1,9 @@
 <?php
 
+session_start();
+require "database.php";
+$id = $_SESSION["id"];
+
 if (isset($_POST["submit"])){
     $file = $_FILES["file"];
 
@@ -19,9 +23,11 @@ if (isset($_POST["submit"])){
         if($fileError === 0){
             // bytes (2MB)
             if($fileSize < 2000000){
-                $fileNameNew = uniqid("", true).".".$fileActualExt;
+                $fileNameNew = "profile".$id.".".$fileActualExt;
                 $fileDestination = "uploads/".$fileNameNew;
                 move_uploaded_file($fileTmpName, $fileDestination);
+                $sql = "UPDATE profileimg SET status=0 WHERE userid='$id';";
+                $result = mysqli_query($conn, $sql);
                 header("Location: index.php?upload=success");
             }
             else {
